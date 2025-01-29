@@ -1,14 +1,22 @@
 import sys
 import pygame
+from settings import Settings # dal modulo creato importiamo le impostazioni 
 
 class AlienInvasion:
 
     def __init__(self):
         """inizializza il gioco e ne crea le risorse"""
         pygame.init()
+        
+        self.clock = pygame.time.Clock() # istanza della classe Clock dal modulo pygame.time: creiamo un clock per accertarci che la frequenza dei fotogrammi coincida con le iterazioni del ciclo principale
 
-        self.screen = pygame.display.set_mode((1200, 800)) # impostazioni dello sfondo: assegna una finestra all'attributo self.screen, così è disponibile in tutti i metodi della classe. L'oggetto assegnato a self.screen è detto SURFACE ed è la parte di schermo in cui l'oggetto stesso è visualizzabile. La surface restituita da display.set_mode() è l'intera superficie di gioco
+        self.settings = Settings() 
+
+        self.screen = pygame.display.set_mode((self.settings.screen_width, self.settings.screen_height)) # impostazioni dello sfondo: assegna una finestra all'attributo self.screen, così è disponibile in tutti i metodi della classe. L'oggetto assegnato a self.screen è detto SURFACE ed è la parte di schermo in cui l'oggetto stesso è visualizzabile. La surface restituita da display.set_mode() è l'intera superficie di gioco
+
         pygame.display.set_caption("Alien Invasion")
+
+        self.bg_color = (self.settings.bg_color) # imposto il colore di sfondo
 
     def run_game (self):
         """ciclo principale del gioco"""
@@ -18,8 +26,11 @@ class AlienInvasion:
                 if event.type == pygame.QUIT:
                     sys.exit()
 
-            # rende visibile la schermata disegnata più recentemente: flip aggiorna la visualizzuazione per mostrare le nuove posizioni
-            pygame.display.flip()
+            self.screen.fill(self.bg_color) # ridisegna lo sfondo alla fine di ogni ciclo; il metodo fill accetta un solo argomento: un colore.
+            
+            pygame.display.flip() # rende visibile la schermata disegnata più recentemente: flip aggiorna la visualizzuazione per mostrare le nuove posizioni
+
+            self.clock.tick(60) #  facciamo scattare il clock alla fine del ciclo while; il metodo tick accetta un solo argomento: la frequenza dei fotogrammi di gioco
 
 if __name__ == '__main__':
     # crea un'istanza del gioco e la esegue
