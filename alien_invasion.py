@@ -1,6 +1,7 @@
 import sys
 import pygame
 from settings import Settings # dal modulo creato importiamo le impostazioni 
+from ship import Ship
 
 class AlienInvasion:
 
@@ -16,6 +17,8 @@ class AlienInvasion:
 
         pygame.display.set_caption("Alien Invasion")
 
+        self.ship = Ship (self) # dopo averla importata, creo un'istanza di Ship. La chiamata a Ship richiede un argomento: un'istanza di Alien Invasion
+
         self.bg_color = (self.settings.bg_color) # imposto il colore di sfondo
 
     def run_game (self):
@@ -27,6 +30,8 @@ class AlienInvasion:
                     sys.exit()
 
             self.screen.fill(self.bg_color) # ridisegna lo sfondo alla fine di ogni ciclo; il metodo fill accetta un solo argomento: un colore.
+
+            self.ship.blitme()
             
             pygame.display.flip() # rende visibile la schermata disegnata più recentemente: flip aggiorna la visualizzuazione per mostrare le nuove posizioni
 
