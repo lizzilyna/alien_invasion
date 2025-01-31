@@ -24,18 +24,25 @@ class AlienInvasion:
     def run_game (self):
         """ciclo principale del gioco"""
         while True:
-            # attende eventi di mouse e tastiera
-            for event in pygame.event.get(): # la funzione pygame.event.get() la usiamo per accedere agli eventi rilevati da pygame, che restituisce in forma di lista. Qualsiasi evento di tastiera o mouse attiva il ciclo for, detto "ciclo eventi".
-                if event.type == pygame.QUIT:
-                    sys.exit()
-
-            self.screen.fill(self.bg_color) # ridisegna lo sfondo alla fine di ogni ciclo; il metodo fill accetta un solo argomento: un colore.
-
-            self.ship.blitme()
             
-            pygame.display.flip() # rende visibile la schermata disegnata più recentemente: flip aggiorna la visualizzuazione per mostrare le nuove posizioni
+            self._check_events()
+            self._update_screen()
 
             self.clock.tick(60) #  facciamo scattare il clock alla fine del ciclo while; il metodo tick accetta un solo argomento: la frequenza dei fotogrammi di gioco
+
+    def _check_events(self): # metodo helper, con _ all'inizio, refactoring per alleggerire il ciclo principale
+        # risponde a eventi di mouse e tastiera
+        for event in pygame.event.get(): # la funzione pygame.event.get() la usiamo per accedere agli eventi rilevati da pygame, che restituisce in forma di lista. Qualsiasi evento di tastiera o mouse attiva il ciclo for, detto "ciclo eventi".
+            if event.type == pygame.QUIT:
+                sys.exit()
+
+    def _update_screen(self): # metodo helper come check_events
+        # aggiorna le immagini sulla schermata e passa a quella nuova    
+        self.screen.fill(self.bg_color) # ridisegna lo sfondo alla fine di ogni ciclo; il metodo fill accetta un solo argomento: un colore.
+        self.ship.blitme() # disegna la nave sullo sfondo 
+        pygame.display.flip() # rende visibile la schermata disegnata più recentemente: flip aggiorna la visualizzuazione per mostrare le nuove posizioni
+
+
 
 if __name__ == '__main__':
     # crea un'istanza del gioco e la esegue
