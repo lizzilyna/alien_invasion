@@ -13,6 +13,12 @@ class Ship:
 
         self.rect.midbottom = self.screen_rect.midbottom # faccio coincidere la posizione iniziale di ship (che voglio in basso al centro) col midbottom del rect della schermata di ai
 
+        self.moving_right = False # flag movimento: all'inizio non si muove
+
+    def update (self):
+        if self.moving_right:
+            self.rect.x += 1
+
     def blitme (self):
         """disegna la nave nella posizione corrente"""
         self.screen.blit(self.image, self.rect)

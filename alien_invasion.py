@@ -7,7 +7,7 @@ class AlienInvasion:
 
     def __init__(self):
         """inizializza il gioco e ne crea le risorse"""
-        pygame.init()
+        pygame.init() # la funzione pygame.init() inizializza le impostazioni dello sfondo necessarie a Pygame per funzionare
         
         self.clock = pygame.time.Clock() # istanza della classe Clock dal modulo pygame.time: creiamo un clock per accertarci che la frequenza dei fotogrammi coincida con le iterazioni del ciclo principale
 
@@ -26,6 +26,7 @@ class AlienInvasion:
         while True:
             
             self._check_events()
+            self.ship.update()
             self._update_screen()
 
             self.clock.tick(60) #  facciamo scattare il clock alla fine del ciclo while; il metodo tick accetta un solo argomento: la frequenza dei fotogrammi di gioco
@@ -35,6 +36,12 @@ class AlienInvasion:
         for event in pygame.event.get(): # la funzione pygame.event.get() la usiamo per accedere agli eventi rilevati da pygame, che restituisce in forma di lista. Qualsiasi evento di tastiera o mouse attiva il ciclo for, detto "ciclo eventi".
             if event.type == pygame.QUIT:
                 sys.exit()
+            elif event.type == pygame.KEYDOWN: # tipo di evento: tasto
+                if event.key == pygame.K_RIGHT: # tipo di tasto: destra
+                    self.ship.moving_right = True
+            elif event.type == pygame.KEYUP:
+                if event.key == pygame.K_RIGHT:
+                    self.ship.moving_right = False
 
     def _update_screen(self): # metodo helper come check_events
         # aggiorna le immagini sulla schermata e passa a quella nuova    
