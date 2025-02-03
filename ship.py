@@ -4,7 +4,8 @@ class Ship:
     def __init__(self, ai_game):
        
         """inizializza la nave e imposta la posizione iniziale"""
-        self.screen = ai_game.screen # assegno ship alla schermata del gioco 
+        self.screen = ai_game.screen # assegno ship alla schermata del gioco
+        self.settings = ai_game.settings 
         self.screen_rect = ai_game.screen.get_rect() # col metodo get_rect accedo all'attributo rect della schermata, poi lo assegno a ship (per posizionarla nel punto giusto della schermata)
 
         """carica la nave e ne ottiene il rettangolo"""
@@ -13,11 +14,18 @@ class Ship:
 
         self.rect.midbottom = self.screen_rect.midbottom # faccio coincidere la posizione iniziale di ship (che voglio in basso al centro) col midbottom del rect della schermata di ai
 
+        self.x = float(self.rect.x) # funzione float per convertire self.rect.x in valore a virgola mobile
+
         self.moving_right = False # flag movimento: all'inizio non si muove
+        self.moving_left = False
 
     def update (self):
         if self.moving_right:
-            self.rect.x += 1
+            self.x += self.settings.ship_speed # è a self.x, che non è un rect, che assegno la ship_speed che è un float
+        if self.moving_left:
+            self.x -= self.settings.ship_speed
+        
+        self.rect.x = self.x # la posizione finale della nave coincide con self.x
 
     def blitme (self):
         """disegna la nave nella posizione corrente"""

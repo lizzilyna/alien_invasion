@@ -36,12 +36,17 @@ class AlienInvasion:
         for event in pygame.event.get(): # la funzione pygame.event.get() la usiamo per accedere agli eventi rilevati da pygame, che restituisce in forma di lista. Qualsiasi evento di tastiera o mouse attiva il ciclo for, detto "ciclo eventi".
             if event.type == pygame.QUIT:
                 sys.exit()
-            elif event.type == pygame.KEYDOWN: # tipo di evento: tasto
+            elif event.type == pygame.KEYDOWN: # tipo di evento: tasto (premuto)
                 if event.key == pygame.K_RIGHT: # tipo di tasto: destra
                     self.ship.moving_right = True
+                elif event.key == pygame.K_LEFT:
+                    self.ship.moving_left = True
+
             elif event.type == pygame.KEYUP:
                 if event.key == pygame.K_RIGHT:
                     self.ship.moving_right = False
+                elif event.key == pygame.K_LEFT:
+                    self.ship.moving_left = False
 
     def _update_screen(self): # metodo helper come check_events
         # aggiorna le immagini sulla schermata e passa a quella nuova    
