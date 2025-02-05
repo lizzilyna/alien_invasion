@@ -15,6 +15,8 @@ class AlienInvasion:
 
         self.screen = pygame.display.set_mode((self.settings.screen_width, self.settings.screen_height)) # impostazioni dello sfondo: assegna una finestra all'attributo self.screen, così è disponibile in tutti i metodi della classe. L'oggetto assegnato a self.screen è detto SURFACE ed è la parte di schermo in cui l'oggetto stesso è visualizzabile. La surface restituita da display.set_mode() è l'intera superficie di gioco
 
+        # self.screen = pygame.display.set_mode ((0,0), pygame.FULLSCREEN) -- se lo vogliamo a tutto schermo
+
         pygame.display.set_caption("Alien Invasion")
 
         self.ship = Ship (self) # dopo averla importata, creo un'istanza di Ship. La chiamata a Ship richiede un argomento: un'istanza di Alien Invasion
@@ -37,16 +39,28 @@ class AlienInvasion:
             if event.type == pygame.QUIT:
                 sys.exit()
             elif event.type == pygame.KEYDOWN: # tipo di evento: tasto (premuto)
-                if event.key == pygame.K_RIGHT: # tipo di tasto: destra
-                    self.ship.moving_right = True
-                elif event.key == pygame.K_LEFT:
-                    self.ship.moving_left = True
+                self._check_keydown_events(event)
 
             elif event.type == pygame.KEYUP:
-                if event.key == pygame.K_RIGHT:
-                    self.ship.moving_right = False
-                elif event.key == pygame.K_LEFT:
-                    self.ship.moving_left = False
+                self._check_keyup_events(event)
+
+
+    def _check_keydown_events(self, event): # refactoring di check_events da cui trasferisco gli eventi legati a tasto premuto
+        if event.key == pygame.K_RIGHT: # tipo di tasto: destra
+            self.ship.moving_right = True
+        elif event.key == pygame.K_LEFT:
+            self.ship.moving_left = True
+        elif event.key==pygame.K_q:
+            sys.exit() # abbiamo aggiunto un tasto di uscita rapida
+
+
+    def _check_keyup_events(self, event): # idem per tasto su
+        if event.key == pygame.K_RIGHT:
+            self.ship.moving_right = False
+        elif event.key == pygame.K_LEFT:
+            self.ship.moving_left = False        
+
+
 
     def _update_screen(self): # metodo helper come check_events
         # aggiorna le immagini sulla schermata e passa a quella nuova    

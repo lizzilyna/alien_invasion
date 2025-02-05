@@ -20,9 +20,9 @@ class Ship:
         self.moving_left = False
 
     def update (self):
-        if self.moving_right:
+        if self.moving_right and self.rect.right < self.screen_rect.right: # e se la mia posizione a dx è < della posizione a dx della schermata?? (sì: libro: self.rect.right == coordinata x del bordo dx della nave; self.screen_rect.right == bordo dx della schermata)
             self.x += self.settings.ship_speed # è a self.x, che non è un rect, che assegno la ship_speed che è un float
-        if self.moving_left:
+        if self.moving_left and self.rect.left > 0: # perché la sx massima della schermata è 0????? (sì: libro: se il lato sinistro della nave è > 0 la nave non ha raggiunto il bordo sinistro della schermata)
             self.x -= self.settings.ship_speed
         
         self.rect.x = self.x # la posizione finale della nave coincide con self.x
