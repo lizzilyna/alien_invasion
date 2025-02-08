@@ -2,6 +2,7 @@ import sys
 import pygame
 from settings import Settings # dal modulo creato importiamo le impostazioni 
 from ship import Ship
+from bullet import Bullet
 
 class AlienInvasion:
 
@@ -20,6 +21,8 @@ class AlienInvasion:
         pygame.display.set_caption("Alien Invasion")
 
         self.ship = Ship (self) # dopo averla importata, creo un'istanza di Ship. La chiamata a Ship richiede un argomento: un'istanza di Alien Invasion
+        
+        self.bullets = pygame.sprite.Group() # ???
 
         self.bg_color = (self.settings.bg_color) # imposto il colore di sfondo
 
@@ -29,6 +32,7 @@ class AlienInvasion:
             
             self._check_events()
             self.ship.update()
+            self.bullets.update() # ???
             self._update_screen()
 
             self.clock.tick(60) #  facciamo scattare il clock alla fine del ciclo while; il metodo tick accetta un solo argomento: la frequenza dei fotogrammi di gioco
