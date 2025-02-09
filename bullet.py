@@ -8,7 +8,7 @@ class Bullet(Sprite):
         self.screen = ai_game.screen
         self.settings = ai_game.settings
         self.color = self.settings.bullet_color
-
+        
         """crea il rect del bullet a (0,0) e imposta la posizione corretta"""
         self.rect = pygame.Rect(0, 0, self.settings.bullet_width, self.settings.bullet_height)# il proiettile non si basa su un'immagine, dobbiamo costruirlo da 0 con la classe Rect che chiede le coordinate x e y dell'angolo superiore sx del rect, poi le misure. Lo mettiamo su 0, 0 ma poi la posizione (che dipende da quella della navicella) cambierà alla riga successiva.
         self.rect.midtop = ai_game.ship.rect.midtop # facciamo coincidere il suo attributo midtop con l'attributo midtop della ship
