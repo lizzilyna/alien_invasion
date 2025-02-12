@@ -29,7 +29,7 @@ class Ship:
 
     def blitme (self):
         """disegna la nave nella posizione corrente"""
-        self.screen.blit(self.image, self.rect)
+        self.screen.blit(self.image, self.rect) # cosa, dove
 
 
 # Ora importo la classe in alien_invasion e ne creo un'istanza.

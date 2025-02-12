@@ -3,6 +3,7 @@ import pygame
 from settings import Settings # dal modulo creato importiamo le impostazioni 
 from ship import Ship
 from bullet import Bullet
+from alien import Alien
 
 class AlienInvasion:
 
@@ -23,6 +24,10 @@ class AlienInvasion:
         self.ship = Ship (self) # dopo averla importata, creo un'istanza di Ship. La chiamata a Ship richiede un argomento: un'istanza di Alien Invasion
         
         self.bullets = pygame.sprite.Group() # il gruppo di proiettili sarà un'istanza della classe pygame.sprite.Group, che si comporta +- come una lista
+
+        self.aliens = pygame.sprite.Group()
+
+        self._create_fleet()
 
         self.bg_color = (self.settings.bg_color) # imposto il colore di sfondo
 
@@ -80,12 +85,18 @@ class AlienInvasion:
                     self.bullets.remove(bullet) # ... quindi deve sparire
                 # print (len(self.bullets)) qui solo per controllare che il remove funzionasse
 
+
+    def _create_fleet(self):
+        alien = Alien(self)  # creo istanza di Alien
+        self.aliens.add(alien) # lo aggiungo al gruppo che conterrà la flotta
+
     def _update_screen(self): # metodo helper come check_events
         # aggiorna le immagini sulla schermata e passa a quella nuova    
         self.screen.fill(self.bg_color) # ridisegna lo sfondo alla fine di ogni ciclo; il metodo fill accetta un solo argomento: un colore.
-        for bullet in self.bullets.sprites(): # il metodo bullets.sprite() restituisce una lista di tutti gli sprite del gruppo bullets
+        for bullet in self.bullets.sprites(): # il metodo bullets.sprites() restituisce una lista di tutti gli sprite del gruppo bullets
             bullet.draw_bullet()
-        self.ship.blitme() # disegna la nave sullo sfondo 
+        self.ship.blitme() # disegna la nave sullo sfondo
+        self.aliens.draw(self.screen) # il metodo draw vuole un argomento: la superficie su cui disegnare nella posizione definita dal suo attributo rect.
         pygame.display.flip() # rende visibile la schermata disegnata più recentemente: flip aggiorna la visualizzuazione per mostrare le nuove posizioni
 
 
