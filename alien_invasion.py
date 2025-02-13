@@ -88,7 +88,26 @@ class AlienInvasion:
 
     def _create_fleet(self):
         alien = Alien(self)  # creo istanza di Alien
-        self.aliens.add(alien) # lo aggiungo al gruppo che conterrà la flotta
+        alien_width, alien_height = alien.rect.size # all'inizio c'era solo x e width, ora che nidifico aggiungo la y -- e per la misura uso l'attributo size di rect, cioè una tupla che contiene larghezza e altezza
+        current_x, current_y = alien_width, alien_height # current_x e current_y sono le posizioni orizzontale e verticale del primo alieno della flotta, e inizialmente la impostiamo alla larghezza e altezza dell'alieno stesso per farlo staccare dai bordi sx e superiore della schermata
+
+        while current_y < (self.settings.screen_height - 3 * alien_height): # racchiudo il while dell'asse x in questo dell'y, che controlla il numero di righe nella schermata
+            while current_x < (self.settings.screen_width - 2 * alien_width): # finché current_x (che è pari alla larghezza dell'alieno) è inferiore alla larghezza dello schermo cui sottraggo 2 larghezze aliene -- finché c'è spazio + 2 alieni di margine
+                self._create_alien(current_x, current_y)
+                current_x += 2 * alien_width # aggiungi a current_x 2 larghezze aliene
+            # Riempita una riga: reimposta il valore x e incrementa y
+            current_x = alien_width # fa ripartire il while x?
+            current_y += 2 * alien_height
+
+
+    def _create_alien(self, x_position, y_position): # helper per fleet
+            new_alien = Alien(self) # crea istanza
+            new_alien.x = x_position 
+            new_alien.y = y_position 
+            new_alien.rect.x = x_position
+            new_alien.rect.y = y_position
+            self.aliens.add(new_alien) # aggiungila al gruppo
+            
 
     def _update_screen(self): # metodo helper come check_events
         # aggiorna le immagini sulla schermata e passa a quella nuova    

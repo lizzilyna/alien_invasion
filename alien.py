@@ -13,8 +13,8 @@ class Alien (Sprite):
         self.rect = self.image.get_rect()
 
         """avvia ogni nuovo alieno in alto a sx della schermata"""
-        self.rect.x = self.rect.width/2 # posizione a sinistra: uguale alla larghezza dell'alieno
-        self.rect.y = self.rect.width/2 # posizione in alto: uguale all'altezza dell'alieno
+        self.rect.x = self.rect.width # posizione a sinistra: uguale alla larghezza dell'alieno/2
+        self.rect.y = self.rect.width/2 # posizione in alto: uguale all'altezza dell'alieno/2
 
         """memorizza la posizione orizzontale precisa perché rect usa solo int"""
         self.x = float(self.rect.x)
