@@ -12,3 +12,8 @@ class Settings:
         self.bullet_height = 15
         self.bullet_color = (255, 0, 255)
         self.bullets_allowed = 3 # limitare il numero di proiettili sulla schermata
+        self.alien_speed = 1.0
+        self.fleet_drop_speed = 10 # velocità alla quale la flotta scende quando un alieno tocca il bordo dx o sx
+
+        # fleet_direction 1 rappresenta destra, -1 sinistra
+        self.fleet_direction = 1

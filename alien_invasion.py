@@ -36,11 +36,11 @@ class AlienInvasion:
         while True:
             
             self._check_events()
-            self.ship.update()
-            self._update_bullets()
-            
+            self.ship.update()          # chiamata per aggiornare la posizione della nave
+            self._update_bullets()      # dei proiettili
+            self._update_aliens()       # degli alieni
             self._update_screen()
-
+            
             self.clock.tick(60) #  facciamo scattare il clock alla fine del ciclo while; il metodo tick accetta un solo argomento: la frequenza dei fotogrammi di gioco
 
     def _check_events(self): # metodo helper, con _ all'inizio, refactoring per alleggerire il ciclo principale
@@ -79,11 +79,16 @@ class AlienInvasion:
             self.bullets.add(new_bullet) # metodo add è l'append di pygame
 
     def _update_bullets(self):
-            self.bullets.update() # chiama automaticamente bullet.update() per tutti i proiettili del gruppo
-            for bullet in self.bullets.copy(): # il metodo copy ci permette di modificare la lista originale nel ciclo for   
-                if bullet.rect.bottom <= 0: # quando il bottom del rect del proiettile è 0 vuol dire che sta al limite superiore dello schermo
-                    self.bullets.remove(bullet) # ... quindi deve sparire
-                # print (len(self.bullets)) qui solo per controllare che il remove funzionasse
+        self.bullets.update() # chiama automaticamente bullet.update() per tutti i proiettili del gruppo
+        for bullet in self.bullets.copy(): # il metodo copy ci permette di modificare la lista originale nel ciclo for   
+            if bullet.rect.bottom <= 0: # quando il bottom del rect del proiettile è 0 vuol dire che sta al limite superiore dello schermo
+                self.bullets.remove(bullet) # ... quindi deve sparire
+            # print (len(self.bullets)) qui solo per controllare che il remove funzionasse
+
+    def _update_aliens(self):
+        """controlla se la flotta è al bordo, poi aggiorna la posizione"""
+        self._check_fleet_edges()
+        self.aliens.update()
 
 
     def _create_fleet(self):
@@ -100,14 +105,25 @@ class AlienInvasion:
             current_y += 2 * alien_height
 
 
-    def _create_alien(self, x_position, y_position): # helper per fleet
+    def _create_alien(self, x_position, y_position): # helper per fleet, vuole come parametri la posizione
             new_alien = Alien(self) # crea istanza
-            new_alien.x = x_position 
+            new_alien.x = x_position # distanza
             new_alien.y = y_position 
-            new_alien.rect.x = x_position
+            new_alien.rect.x = x_position # rect
             new_alien.rect.y = y_position
             self.aliens.add(new_alien) # aggiungila al gruppo
+
+    def _check_fleet_edges(self):
+        for alien in self.aliens.sprites():
+            if alien.check_edges():
+                self._change_fleet_direction()  # se uno è sul bordo cambiamo direzione a tutta la flotta
+                break                           # e usciamo dal ciclo
             
+    def _change_fleet_direction(self):
+        """fa scendere e cambiare direzione a tutta la flotta"""
+        for alien in self.aliens.sprites():
+            alien.rect.y += self.settings.fleet_drop_speed  # li facciamo scendere tutti
+        self.settings.fleet_direction *= -1                 # poi cambiamo il valore di fleet_direction moltiplicandolo per -1
 
     def _update_screen(self): # metodo helper come check_events
         # aggiorna le immagini sulla schermata e passa a quella nuova    
