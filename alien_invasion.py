@@ -85,6 +85,17 @@ class AlienInvasion:
                 self.bullets.remove(bullet) # ... quindi deve sparire
             # print (len(self.bullets)) qui solo per controllare che il remove funzionasse
 
+            self._check_bullet_alien_collisions()
+
+
+    def _check_bullet_alien_collisions(self):      
+        collisions = pygame.sprite.groupcollide(self.bullets, self.aliens, False, True) # controlla se i proiettili colpiscono gli alieni, e nel caso elimina gli uni e gli altri:
+        """ogni volta che i rect di un alieno e di un proiettile si sovrappongono groupcollide() aggiunge una coppia chiave-valore al dizionario che restituisce; il primo True elimina proiettile, il secondo l'alieno"""
+        if not self.aliens: # se non ce ne sono più, devo ripopolare
+            self.bullets.empty() # .empty() elimina da un gruppo tutti gli sprite rimasti
+            self._create_fleet()
+            
+
     def _update_aliens(self):
         """controlla se la flotta è al bordo, poi aggiorna la posizione"""
         self._check_fleet_edges()
@@ -123,7 +134,7 @@ class AlienInvasion:
         """fa scendere e cambiare direzione a tutta la flotta"""
         for alien in self.aliens.sprites():
             alien.rect.y += self.settings.fleet_drop_speed  # li facciamo scendere tutti
-        self.settings.fleet_direction *= -1                 # poi cambiamo il valore di fleet_direction moltiplicandolo per -1
+        self.settings.fleet_direction *= -1                 # poi cambiamo il valore di fleet_direction moltiplicandolo per -1 (da dx a sx e viceversa)
 
     def _update_screen(self): # metodo helper come check_events
         # aggiorna le immagini sulla schermata e passa a quella nuova    

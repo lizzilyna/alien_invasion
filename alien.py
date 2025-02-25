@@ -7,7 +7,7 @@ class Alien (Sprite):
         super().__init__()
         self.screen = ai_game.screen
         self.settings = ai_game.settings
-        self.screen_rect = ai_game.screen.get_rect()
+        self.screen_rect = ai_game.screen.get_rect() # non game.rect o game.get_rect perché game non ha rect (prendi il rect dallo screen)
 
         self.image = pygame.image.load('images/alien.bmp')
         self.rect = self.image.get_rect()
@@ -16,7 +16,7 @@ class Alien (Sprite):
         self.rect.x = self.rect.width # posizione a sinistra: uguale alla larghezza dell'alieno/2
         self.rect.y = self.rect.width/2 # posizione in alto: uguale all'altezza dell'alieno/2
 
-        """memorizza la posizione orizzontale precisa perché rect usa solo int"""
+        """memorizza la posizione orizzontale e verticale precisa perché rect usa solo int"""
         self.x = float(self.rect.x)
         self.y = float(self.rect.y)
 
