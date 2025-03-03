@@ -31,5 +31,10 @@ class Ship:
         """disegna la nave nella posizione corrente"""
         self.screen.blit(self.image, self.rect) # cosa, dove
 
+    def center_ship(self):
+        """centra la nave sullo schermo"""
+        self.rect.midbottom = self.screen_rect.midbottom
+        self.x = float(self.rect.x)
+
 
 # Ora importo la classe in alien_invasion e ne creo un'istanza.

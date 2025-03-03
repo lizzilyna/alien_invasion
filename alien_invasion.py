@@ -1,6 +1,8 @@
 import sys
+from time import sleep
 import pygame
-from settings import Settings # dal modulo creato importiamo le impostazioni 
+from settings import Settings 
+from game_stats import GameStats
 from ship import Ship
 from bullet import Bullet
 from alien import Alien
@@ -20,6 +22,8 @@ class AlienInvasion:
         # self.screen = pygame.display.set_mode ((0,0), pygame.FULLSCREEN) -- se lo vogliamo a tutto schermo
 
         pygame.display.set_caption("Alien Invasion")
+
+        self.stats = GameStats (self) # istanza per le statistiche di gioco. Richiede AI_game come argomento
 
         self.ship = Ship (self) # dopo averla importata, creo un'istanza di Ship. La chiamata a Ship richiede un argomento: un'istanza di Alien Invasion
         
@@ -101,6 +105,11 @@ class AlienInvasion:
         self._check_fleet_edges()
         self.aliens.update()
 
+        # cerca collisioni alieni-nave
+        if pygame.sprite.spritecollideany (self.ship, self.aliens): # la funzione spritecollideany accetta due argomenti: uno sprite e un gruppo; se uno solo dei componenti del gruppo tocca lo sprite l'if è soddisfatto
+            self._ship_hit()
+        self._check_aliens_bottom()
+
 
     def _create_fleet(self):
         alien = Alien(self)  # creo istanza di Alien
@@ -135,6 +144,32 @@ class AlienInvasion:
         for alien in self.aliens.sprites():
             alien.rect.y += self.settings.fleet_drop_speed  # li facciamo scendere tutti
         self.settings.fleet_direction *= -1                 # poi cambiamo il valore di fleet_direction moltiplicandolo per -1 (da dx a sx e viceversa)
+
+    def _ship_hit(self):
+        """risponde alla collisione di un alieno con la nave"""
+        # decrementa il numero di navi rimaste
+        self.stats.ships_left -=1
+
+        # fa sparire proiettili e alieni rimasti
+        self.bullets.empty()
+        self.aliens.empty()
+
+        # crea una nuova flotta e centra la nave
+        self._create_fleet()
+        self.ship.center_ship()
+
+        # pausa
+        sleep(0.5)
+
+
+    def _check_aliens_bottom(self):
+        """controlla se un alieno ha toccato il fondo della schermata"""
+        for alien in self.aliens.sprites():
+            if alien.rect.bottom >= self.settings.screen_height:
+                # come quando la nave viene colpita
+                self._ship_hit()
+                break
+
 
     def _update_screen(self): # metodo helper come check_events
         # aggiorna le immagini sulla schermata e passa a quella nuova    
