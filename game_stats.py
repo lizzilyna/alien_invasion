@@ -7,5 +7,5 @@ class GameStats:
         self.reset_stats()
 
     def reset_stats(self):
-        """inizializza lw statistiche che possono cambiare durante il gioco"""
-        self.ships_left = self.settings.ship_limit
+        """inizializza le statistiche che possono cambiare durante il gioco"""
+        self.ships_left = self.settings.ship_limit # all'inizio del gioco il numero di navi è quello stabilito nei settings

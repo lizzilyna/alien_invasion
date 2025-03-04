@@ -35,14 +35,20 @@ class AlienInvasion:
 
         self.bg_color = (self.settings.bg_color) # imposto il colore di sfondo
 
+        self.game_active = True # flag: quando parte il gioco è attivo
+
+
     def run_game (self):
         """ciclo principale del gioco"""
         while True:
             
             self._check_events()
-            self.ship.update()          # chiamata per aggiornare la posizione della nave
-            self._update_bullets()      # dei proiettili
-            self._update_aliens()       # degli alieni
+
+            if self.game_active:
+                self.ship.update()          # chiamata per aggiornare la posizione della nave
+                self._update_bullets()      # dei proiettili
+                self._update_aliens()       # degli alieni
+           
             self._update_screen()
             
             self.clock.tick(60) #  facciamo scattare il clock alla fine del ciclo while; il metodo tick accetta un solo argomento: la frequenza dei fotogrammi di gioco
@@ -148,18 +154,21 @@ class AlienInvasion:
     def _ship_hit(self):
         """risponde alla collisione di un alieno con la nave"""
         # decrementa il numero di navi rimaste
-        self.stats.ships_left -=1
+        if self.stats.ships_left >0:
+            self.stats.ships_left -=1
 
-        # fa sparire proiettili e alieni rimasti
-        self.bullets.empty()
-        self.aliens.empty()
+            # fa sparire proiettili e alieni rimasti
+            self.bullets.empty()
+            self.aliens.empty()
 
-        # crea una nuova flotta e centra la nave
-        self._create_fleet()
-        self.ship.center_ship()
+            # crea una nuova flotta e centra la nave
+            self._create_fleet()
+            self.ship.center_ship()
 
-        # pausa
-        sleep(0.5)
+            # pausa
+            sleep(0.5)
+        else:
+            self.game_active = False
 
 
     def _check_aliens_bottom(self):
