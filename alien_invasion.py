@@ -6,6 +6,7 @@ from game_stats import GameStats
 from ship import Ship
 from bullet import Bullet
 from alien import Alien
+from button import Button
 
 class AlienInvasion:
 
@@ -35,7 +36,9 @@ class AlienInvasion:
 
         self.bg_color = (self.settings.bg_color) # imposto il colore di sfondo
 
-        self.game_active = True # flag: quando parte il gioco è attivo
+        self.game_active = False # flag: quando parte il gioco è inattivo
+
+        self.play_button = Button (self, "Play")    # crea un'istanza del Button, ma lo disegniamo in update_screen chiamando il suo metodo draW_button()
 
 
     def run_game (self):
@@ -63,6 +66,15 @@ class AlienInvasion:
 
             elif event.type == pygame.KEYUP:
                 self._check_keyup_events(event)
+
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_pos = pygame.mouse.get_pos() # restituisce una tupla con le coord x e y del puntatore
+                self._check_play_button(mouse_pos)
+
+    def _check_play_button(self, mouse_pos):
+        """inizia una partita quando si preme play"""
+        if self.play_button.rect.collidepoint(mouse_pos):
+            self.game_active = True
 
 
     def _check_keydown_events(self, event): # refactoring di check_events da cui trasferisco gli eventi legati a tasto premuto
@@ -187,6 +199,8 @@ class AlienInvasion:
             bullet.draw_bullet()
         self.ship.blitme() # disegna la nave sullo sfondo
         self.aliens.draw(self.screen) # il metodo draw vuole un argomento: la superficie su cui disegnare nella posizione definita dal suo attributo rect.
+        if not self.game_active:
+            self.play_button.draw_button() # dopo tutti gli altri così appare in primo piano
         pygame.display.flip() # rende visibile la schermata disegnata più recentemente: flip aggiorna la visualizzuazione per mostrare le nuove posizioni
 
 
