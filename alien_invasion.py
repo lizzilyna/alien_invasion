@@ -73,8 +73,18 @@ class AlienInvasion:
 
     def _check_play_button(self, mouse_pos):
         """inizia una partita quando si preme play"""
-        if self.play_button.rect.collidepoint(mouse_pos):
-            self.game_active = True
+        button_clicked = self.play_button.rect.collidepoint(mouse_pos) # un flag, True o False
+        if button_clicked and not self.game_active:     # disattivo il pulsante play per evitare che la sua area resti attiva anche in sua assenza (nn ho capito) Ora forse sì, la partita si riavvia solo se clicchi play e il gioco è non attivo (prima anche se era attivo)
+           self._play_game()
+
+    def _play_game(self):           # refactoring fatto da me, es. 14.1
+        self.stats.reset_stats()    # reimposta le statistiche del gioco
+        self.game_active = True
+        self.bullets.empty()        # svuota 
+        self.aliens.empty()         # svuota
+        self._create_fleet()        # crea flotta
+        self.ship.center_ship()     # centra la nave
+        pygame.mouse.set_visible(False) # nasconde il puntatore del mouse
 
 
     def _check_keydown_events(self, event): # refactoring di check_events da cui trasferisco gli eventi legati a tasto premuto
@@ -86,6 +96,8 @@ class AlienInvasion:
             sys.exit() # abbiamo aggiunto un tasto di uscita rapida
         elif event.key == pygame.K_SPACE:
             self._fire_bullet()
+        elif event.key == pygame.K_p:
+            self._play_game()
 
 
     def _check_keyup_events(self, event): # idem per tasto su
@@ -181,6 +193,7 @@ class AlienInvasion:
             sleep(0.5)
         else:
             self.game_active = False
+            pygame.mouse.set_visible(True)  # ricompare il puntatore
 
 
     def _check_aliens_bottom(self):
