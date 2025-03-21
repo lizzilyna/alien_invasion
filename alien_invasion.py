@@ -7,6 +7,7 @@ from ship import Ship
 from bullet import Bullet
 from alien import Alien
 from button import Button
+from mode_buttons import Mode_buttons
 
 class AlienInvasion:
 
@@ -40,6 +41,10 @@ class AlienInvasion:
 
         self.play_button = Button (self, "Play")    # crea un'istanza del Button, ma lo disegniamo in update_screen chiamando il suo metodo draW_button()
 
+        self.easy_button = Mode_buttons (self, 'Hard')
+        self.medium_button = Mode_buttons (self, 'Very Hard')
+        self.hard_button = Mode_buttons (self, 'ADHD')
+
 
     def run_game (self):
         """ciclo principale del gioco"""
@@ -71,10 +76,16 @@ class AlienInvasion:
                 mouse_pos = pygame.mouse.get_pos() # restituisce una tupla con le coord x e y del puntatore
                 self._check_play_button(mouse_pos)
 
+
+
+
+
+
     def _check_play_button(self, mouse_pos):
         """inizia una partita quando si preme play"""
         button_clicked = self.play_button.rect.collidepoint(mouse_pos) # un flag, True o False
         if button_clicked and not self.game_active:     # disattivo il pulsante play per evitare che la sua area resti attiva anche in sua assenza (nn ho capito) Ora forse sì, la partita si riavvia solo se clicchi play e il gioco è non attivo (prima anche se era attivo)
+           self.settings.initialize_dynamic_settings()
            self._play_game()
 
     def _play_game(self):           # refactoring fatto da me, es. 14.1
@@ -128,7 +139,7 @@ class AlienInvasion:
         if not self.aliens: # se non ce ne sono più, devo ripopolare
             self.bullets.empty() # .empty() elimina da un gruppo tutti gli sprite rimasti
             self._create_fleet()
-            
+            self.settings.increase_speed()
 
     def _update_aliens(self):
         """controlla se la flotta è al bordo, poi aggiorna la posizione"""
