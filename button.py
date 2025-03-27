@@ -14,7 +14,7 @@ class Button:
 
         # costruisce l'oggetto rect del pulsante e lo centra
         self.rect = pygame.Rect (0, 0, self.width, self.height)
-        self.rect.center = self.screen_rect.center          # facciamo coincidere il suo valore di centro a quello della schermata
+        self.rect.center = (640, 290)          # facciamo coincidere il suo valore di centro a quello della schermata
 
         self._prep_msg(msg)
 

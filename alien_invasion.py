@@ -8,6 +8,7 @@ from bullet import Bullet
 from alien import Alien
 from button import Button
 from mode_buttons import Mode_buttons
+from scoreboard import Scoreboard
 
 class AlienInvasion:
 
@@ -20,12 +21,14 @@ class AlienInvasion:
         self.settings = Settings() 
 
         self.screen = pygame.display.set_mode((self.settings.screen_width, self.settings.screen_height)) # impostazioni dello sfondo: assegna una finestra all'attributo self.screen, così è disponibile in tutti i metodi della classe. L'oggetto assegnato a self.screen è detto SURFACE ed è la parte di schermo in cui l'oggetto stesso è visualizzabile. La surface restituita da display.set_mode() è l'intera superficie di gioco
-
+        self.screen_rect = self.screen.get_rect()
         # self.screen = pygame.display.set_mode ((0,0), pygame.FULLSCREEN) -- se lo vogliamo a tutto schermo
 
         pygame.display.set_caption("Alien Invasion")
 
         self.stats = GameStats (self) # istanza per le statistiche di gioco. Richiede AI_game come argomento
+
+        self.sb = Scoreboard (self)
 
         self.ship = Ship (self) # dopo averla importata, creo un'istanza di Ship. La chiamata a Ship richiede un argomento: un'istanza di Alien Invasion
         
@@ -41,9 +44,9 @@ class AlienInvasion:
 
         self.play_button = Button (self, "Play")    # crea un'istanza del Button, ma lo disegniamo in update_screen chiamando il suo metodo draW_button()
 
-        self.easy_button = Mode_buttons (self, 'Hard')
-        self.medium_button = Mode_buttons (self, 'Very Hard')
-        self.hard_button = Mode_buttons (self, 'ADHD')
+        self.easy_button = Mode_buttons (self, 'Hard', (450, 560))
+        self.medium_button = Mode_buttons (self, 'Very Hard', (650, 560))
+        self.hard_button = Mode_buttons (self, 'Asperger', (850, 560))
 
 
     def run_game (self):
@@ -79,17 +82,37 @@ class AlienInvasion:
 
 
 
+    def _check_difficulty_button(self, mouse_pos):
+        easy_clicked = self.easy_button.rect.collidepoint(mouse_pos)
+        medium_clicked = self.medium_button.rect.collidepoint(mouse_pos)
+        hard_clicked = self.hard_button.rect.collidepoint(mouse_pos)
+        
+        if easy_clicked and not self.game_active:
+            self.settings.initialize_dynamic_settings(1.4, 2.4, 0.9)
+        if medium_clicked and not self.game_active:
+            self.settings.initialize_dynamic_settings(1.5, 2.5, 1)
+        if hard_clicked and not self.game_active:
+            self.settings.initialize_dynamic_settings(2, 3, 2)
 
 
     def _check_play_button(self, mouse_pos):
         """inizia una partita quando si preme play"""
+        
+        self._check_difficulty_button(mouse_pos)
+        self.easy_button.hide_button()
+        self.medium_button.hide_button()
+        self.hard_button.hide_button()
+
         button_clicked = self.play_button.rect.collidepoint(mouse_pos) # un flag, True o False
         if button_clicked and not self.game_active:     # disattivo il pulsante play per evitare che la sua area resti attiva anche in sua assenza (nn ho capito) Ora forse sì, la partita si riavvia solo se clicchi play e il gioco è non attivo (prima anche se era attivo)
-           self.settings.initialize_dynamic_settings()
+           #self.settings.initialize_dynamic_settings()
            self._play_game()
 
     def _play_game(self):           # refactoring fatto da me, es. 14.1
         self.stats.reset_stats()    # reimposta le statistiche del gioco
+        self.sb.prep_score()        # nuova immagine del punteggio aggiornato; successiva al reset quindi a 0
+        self.sb.prep_level()        # nuova immagine del livello
+        self.sb.prep_ships()        # numero navi
         self.game_active = True
         self.bullets.empty()        # svuota 
         self.aliens.empty()         # svuota
@@ -135,11 +158,20 @@ class AlienInvasion:
 
     def _check_bullet_alien_collisions(self):      
         collisions = pygame.sprite.groupcollide(self.bullets, self.aliens, False, True) # controlla se i proiettili colpiscono gli alieni, e nel caso elimina gli uni e gli altri:
-        """ogni volta che i rect di un alieno e di un proiettile si sovrappongono groupcollide() aggiunge una coppia chiave-valore al dizionario che restituisce; il primo True elimina proiettile, il secondo l'alieno"""
-        if not self.aliens: # se non ce ne sono più, devo ripopolare
+        """ogni volta che i rect di un alieno e di un proiettile si sovrappongono groupcollide() aggiunge una coppia chiave (proiettile) - valore (lista degli alieni colpiti) al dizionario collisions che restituisce; il primo True elimina proiettile, il secondo l'alieno"""
+        if collisions:
+            for aliens in collisions.values():                                  # collision.values = lista di alieni
+                self.stats.score += self.settings.alien_points * len(aliens)    # aggiunge il punteggio dell'alieno abbattuto
+            self.sb.prep_score()                                                # crea immagine per il nuovo punteggio
+            self.sb.prep_level()
+            self.sb.check_high_score()
+            
+        if not self.aliens: # se non ce ne sono più (flotta distrutta), devo ripopolare
             self.bullets.empty() # .empty() elimina da un gruppo tutti gli sprite rimasti
-            self._create_fleet()
-            self.settings.increase_speed()
+            self._create_fleet() # creo nuova flotta
+            self.settings.increase_speed() # aumento difficoltà
+            self.stats.level += 1 # incremento il livello nelle stats
+            self.sb.prep_level() # lo disegno in cima
 
     def _update_aliens(self):
         """controlla se la flotta è al bordo, poi aggiorna la posizione"""
@@ -189,8 +221,9 @@ class AlienInvasion:
     def _ship_hit(self):
         """risponde alla collisione di un alieno con la nave"""
         # decrementa il numero di navi rimaste
-        if self.stats.ships_left >0:
-            self.stats.ships_left -=1
+        if self.stats.ships_left >0:    # se ce n'è ancora qualcuna
+            self.stats.ships_left -=1   # togline una
+            self.sb.prep_ships()
 
             # fa sparire proiettili e alieni rimasti
             self.bullets.empty()
@@ -223,7 +256,11 @@ class AlienInvasion:
             bullet.draw_bullet()
         self.ship.blitme() # disegna la nave sullo sfondo
         self.aliens.draw(self.screen) # il metodo draw vuole un argomento: la superficie su cui disegnare nella posizione definita dal suo attributo rect.
+        self.sb.show_score()
         if not self.game_active:
+            self.easy_button.draw_button()
+            self.medium_button.draw_button()
+            self.hard_button.draw_button()
             self.play_button.draw_button() # dopo tutti gli altri così appare in primo piano
         pygame.display.flip() # rende visibile la schermata disegnata più recentemente: flip aggiorna la visualizzuazione per mostrare le nuove posizioni
 

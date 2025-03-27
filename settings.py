@@ -11,7 +11,7 @@ class Settings:
         self.ship_limit = 3
 
         # Bullet settings -->
-        self.bullet_width = 4 #3000 se voglio testare facendo veloce
+        self.bullet_width = 400 #3000 se voglio testare facendo veloce
         self.bullet_height = 15
         self.bullet_color = (255, 0, 255)
         self.bullets_allowed = 30 # limitare il numero di proiettili sulla schermata
@@ -21,16 +21,21 @@ class Settings:
 
         # Quanto accelera il gioco -->
         self.speedup_scale = 1.1
+        
+        # Aumenta il valore degli alieni -->
+        self.score_scale = 1.5
 
         # Chiamiamo il metodo che inizializza le impostazioni che cambiano con l'aumentare della difficoltà
-        self.initialize_dynamic_settings() 
+        self.initialize_dynamic_settings(0, 0, 0) 
 
 
-    def initialize_dynamic_settings(self):
+    def initialize_dynamic_settings(self, ship_speed, bullet_speed, alien_speed):
         """lo usiamo all'avvio di partita"""
-        self.ship_speed = 1.5
-        self.bullet_speed = 2.5
-        self.alien_speed = 1.0
+        self.ship_speed = ship_speed
+        self.bullet_speed = bullet_speed
+        self.alien_speed = alien_speed
+        
+        self.alien_points = 50
 
         # fleet_direction 1 rappresenta destra, -1 sinistra
         self.fleet_direction = 1
@@ -40,3 +45,6 @@ class Settings:
         self.ship_speed *= self.speedup_scale
         self.bullet_speed *= self.speedup_scale
         self.alien_speed *= self.speedup_scale
+
+        self.alien_points = int(self.alien_points * self.score_scale)
+        

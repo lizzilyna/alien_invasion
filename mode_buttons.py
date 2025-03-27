@@ -1,17 +1,19 @@
 import pygame.font
+from settings import Settings
 
 class Mode_buttons:
-    def __init__(self, game, msg):
+    def __init__(self, game, msg, rect_center):
         self.screen = game.screen
         self.screen_rect = self.screen.get_rect()
+        self.settings = Settings()
 
-        self.width, self.height = 100, 50
-        self.button_color = (0, 135, 0)
+        self.width, self.height = 150, 50
+        self.button_color = (253, 6, 185)
         self.text_color = (255, 255, 255)
-        self.font = pygame.font.SysFont (None, 38)
+        self.font = pygame.font.SysFont (None, 34)
 
         self.rect = pygame.Rect (0, 0, self.width, self.height)
-        self.rect.center = self.screen_rect.topleft
+        self.rect.center = rect_center
 
         self._prep_msg(msg)
 
@@ -21,5 +23,11 @@ class Mode_buttons:
         self.msg_image_rect.center = self.rect.center
 
     def draw_button (self):
-        self.screen.fill(self.button_color) # --> Disegna la figura creata da noi
-        self.screen.blit(self.msg_image, self.msg_image.rect)  # --> Disegna un'immagine
+        self.screen.fill(self.button_color, self.rect) # --> Disegna la figura creata da noi
+        self.screen.blit(self.msg_image, self.msg_image_rect)  # --> Disegna un'immagine
+
+    def hide_button (self):
+        self.rect = pygame.Rect (0, 0, 0, 0)
+        self.msg_image = pygame.Surface ((0,0))
+        self.msg_image_rect = pygame.Rect(0, 0, 0, 0) 
+
